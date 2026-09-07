@@ -4,11 +4,15 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-change-me-in-production'
-DEBUG = True
-ALLOWED_HOSTS = [ host.strip()
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
+ALLOWED_HOSTS = [
+    host.strip()
     for host in os.environ.get("ALLOWED_HOSTS", "").split(",")
-    if host.strip()]
+    if host.strip()
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
