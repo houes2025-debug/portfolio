@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<style>
+/* ========== VARIABLES CSS ========== */
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #818cf8;
+    --bg-card: #ffffff;
+    --bg-body: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --gradient-primary: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
+
+/* Dark mode */
+body.dark-mode {
+    --bg-card: #1e293b;
+    --bg-body: #0f172a;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+}
+
+/* ========== POST DETAIL ========== */
+.post-detail {
+    padding: 40px 20px;
+    background: var(--bg-body);
+    min-height: 100vh;
+}
+
+.post-detail .container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ========== POST HERO ========== */
+.post-hero {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+    background: #1e293b;
+}
+
+.post-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.post-hero:hover img {
+    transform: scale(1.03);
+}
+
+.post-hero .placeholder-hero {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.post-hero .placeholder-hero i {
+    font-size: 5rem;
+    color: white;
+    opacity: 0.5;
+}
+
+.post-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(30, 41, 59, 0.1) 0%, rgba(30, 41, 59, 0.85) 100%);
+    pointer-events: none;
+}
+
+/* ========== POST CONTENT CARD ========== */
+.post-detail-content {
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 40px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.post-detail-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.post-detail-content:hover::before {
+    transform: scaleX(1);
+}
+
+.post-detail-content:hover {
+    border-color: rgba(79, 70, 229, 0.2);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+/* ========== POST HEADER ========== */
+.post-detail-header {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.post-detail-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.post-detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.post-detail-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.post-detail-meta a {
+    color: var(--primary) !important;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.post-detail-meta a:hover {
+    color: var(--primary-dark) !important;
+    text-decoration: underline;
+}
+
+.post-detail-meta .category-badge {
+    padding: 6px 16px;
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.post-detail-meta .category-badge:hover {
+    background: var(--primary);
+    color: white !important;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+/* ========== POST BODY ========== */
+.post-body {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.post-body p {
+    margin-bottom: 20px;
+}
+
+.post-body h2 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    margin: 40px 0 20px;
+    font-weight: 600;
+}
+
+.post-body h3 {
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    margin: 30px 0 15px;
+    font-weight: 600;
+}
+
+.post-body ul, .post-body ol {
+    margin-bottom: 20px;
+    padding-left: 30px;
+}
+
+.post-body li {
+    margin-bottom: 8px;
+}
+
+.post-body blockquote {
+    border-left: 4px solid var(--primary);
+    padding: 20px 30px;
+    margin: 30px 0;
+    background: rgba(79, 70, 229, 0.05);
+    border-radius: 0 12px 12px 0;
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.post-body code {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.post-body pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 30px 0;
+}
+
+.post-body pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+.post-body img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 30px 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.post-body a {
+    color: var(--primary);
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.post-body a:hover {
+    color: var(--primary-dark);
+}
+
+/* ========== TAGS ========== */
+.post-tags-section {
+    margin: 40px 0;
+    padding: 30px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.post-tags-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.post-tags-section h3 i {
+    color: var(--primary);
+}
+
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    padding: 6px 16px;
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: default;
+    border: none;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.tag:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+body.dark-mode .tag {
+    background: rgba(99, 102, 241, 0.2);
+    color: var(--primary-light);
+}
+
+body.dark-mode .tag:hover {
+    background: var(--primary-light);
+    color: var(--bg-card);
+}
+
+/* ========== AUTHOR BOX ========== */
+.post-author {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    background: rgba(79, 70, 229, 0.03);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin: 40px 0;
+    transition: all 0.3s ease;
+}
+
+.post-author:hover {
+    border-color: rgba(79, 70, 229, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.post-author img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+}
+
+.post-author .author-info h4 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.post-author .author-info p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* ========== NAVIGATION ========== */
+.post-nav {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.post-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px;
+    border: 2px solid var(--primary);
+    color: var(--primary) !important;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: transparent;
+    font-size: 0.95rem;
+}
+
+.post-nav a:hover {
+    background: var(--primary);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+    text-decoration: none;
+}
+
+.post-nav .prev-post i {
+    margin-right: 5px;
+}
+
+.post-nav .next-post i {
+    margin-left: 5px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .post-hero {
+        height: 250px;
+        margin-bottom: 24px;
+    }
+    
+    .post-detail-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .post-detail-content {
+        padding: 24px;
+    }
+    
+    .post-body {
+        font-size: 1rem;
+    }
+    
+    .post-body h2 {
+        font-size: 1.4rem;
+    }
+    
+    .post-body h3 {
+        font-size: 1.2rem;
+    }
+    
+    .post-nav {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .post-nav a {
+        justify-content: center;
+    }
+    
+    .post-author {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
+
+<!-- Hero du post -->
+<section class="post-detail">
+    <div class="container">
+        <!-- Image principale -->
+        <div class="post-hero">
+            {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}">
+            {% else %}
+            <div class="placeholder-hero">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            {% endif %}
+            <div class="post-hero-overlay"></div>
+        </div>
+
+        <!-- Contenu -->
+        <div class="post-detail-content">
+            <!-- En-tête -->
+            <div class="post-detail-header">
+                <h1>{{ post.title }}</h1>
+                
+                <div class="post-detail-meta">
+                    <span>
+                        <i class="far fa-calendar"></i> {{ post.created_at|date:"d F Y" }}
+                    </span>
+                    <span>
+                        <i class="far fa-clock"></i> {{ post.read_time|default:"5" }} min de lecture
+                    </span>
+                    {% if post.category %}
+                    <a href="{% url 'category' post.category.slug %}" class="category-badge">
+                        <i class="fas fa-folder"></i> {{ post.category.name }}
+                    </a>
+                    {% endif %}
+                    {% if post.author %}
+                    <span>
+                        <i class="far fa-user"></i> Par <a href="#">{{ post.author.get_full_name|default:post.author.username }}</a>
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Corps de l'article -->
+            <div class="post-body">
+                {{ post.content|safe }}
+            </div>
+
+            <!-- Tags -->
+            {% if post.tags.all %}
+            <div class="post-tags-section">
+                <h3><i class="fas fa-tags"></i> Tags</h3>
+                <div class="post-tags">
+                    {% for tag in post.tags.all %}
+                    <a href="{% url 'tag' tag.slug %}" class="tag">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Auteur -->
+            {% if post.author %}
+            <div class="post-author">
+                {% if post.author.profile.avatar %}
+                <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}">
+                {% else %}
+                <img src="https://ui-avatars.com/api/?name={{ post.author.username }}&background=4f46e5&color=fff" alt="{{ post.author.username }}">
+                {% endif %}
+                <div class="author-info">
+                    <h4>{{ post.author.get_full_name|default:post.author.username }}</h4>
+                    <p>{{ post.author.profile.bio|default:"Auteur de cet article" }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Navigation -->
+            <div class="post-nav">
+                {% if previous_post %}
+                <a href="{{ previous_post.get_absolute_url }}" class="prev-post">
+                    <i class="fas fa-arrow-left"></i> Article précédent
+                </a>
+                {% else %}
+                <span></span>
+                {% endif %}
+                
+                <a href="{% url 'post_list'  %}" class="btn btn-outline">
+                    <i class="fas fa-list"></i> Tous les articles
+                </a>
+                
+                {% if next_post %}
+                <a href="{{ next_post.get_absolute_url }}" class="next-post">
+                    Article suivant <i class="fas fa-arrow-right"></i>
+                </a>
+                {% else %}
+                <span></span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

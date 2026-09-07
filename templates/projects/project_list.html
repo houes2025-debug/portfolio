@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-badge">👋 Bienvenue sur mon portfolio</span>
+        <h1>Développeur <span class="highlight">Django</span></h1>
+        <p class="hero-subtitle">Je conçois des applications web robustes, scalables et élégantes</p>
+        <div class="hero-cta">
+            <a href="#projets" class="btn btn-primary">
+                <i class="fas fa-rocket"></i> Voir mes projets
+            </a>
+            <a href="/contact/" class="btn btn-outline">
+                <i class="fas fa-envelope"></i> Me contacter
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Projets -->
+<section id="projets" class="section">
+    <div class="section-header">
+        <h2>Mes <span class="text-gradient">Projets</span></h2>
+        <div class="section-divider"></div>
+        <p>Une sélection de mes réalisations récentes</p>
+    </div>
+    
+    <div class="projects-grid">
+        {% for project in projects %}
+        <article class="project-card fade-in">
+            <div class="project-image-wrapper">
+                {% if project.image %}
+                <img src="{{ project.image.url }}" alt="{{ project.title }}" class="project-image">
+                {% else %}
+                <div class="project-image" style="background: var(--bg-secondary); display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-code" style="font-size: 3rem; color: var(--text-muted);"></i>
+                </div>
+                {% endif %}
+                <div class="project-overlay">
+                    <a href="{{ project.github_url }}" target="_blank" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="{{ project.live_url }}" target="_blank" title="Démo">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="project-content">
+                <h3><a href="{% url 'project_detail' project.slug %}">{{ project.title }}</a></h3>
+                <p>{{ project.short_description|default:project.description|truncatewords:15 }}</p>
+                <div class="project-tags">
+                    {% for tech in project.tech_stack.split %}
+                    <span class="tag">{{ tech }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="empty-state" style="grid-column: 1/-1;">
+            <i class="fas fa-folder-open"></i>
+            <p>Aucun projet pour le moment. Ajoutez-en depuis l'admin !</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Compétences -->
+<section class="section" style="background: var(--bg-secondary);">
+    <div class="section-header">
+        <h2>Mes <span class="text-gradient">Compétences</span></h2>
+        <div class="section-divider"></div>
+        <p>Les technologies que j'utilise au quotidien</p>
+    </div>
+    
+    <div class="skills-grid">
+        <div class="skill-card fade-in">
+            <div class="skill-header">
+                <div class="skill-icon"><i class="fab fa-python"></i></div>
+                <h3>Backend</h3>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>Django</span>
+                    <span>90%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 90%;"></div>
+                </div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>Python</span>
+                    <span>85%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 85%;"></div>
+                </div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>PostgreSQL</span>
+                    <span>75%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 75%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="skill-card fade-in">
+            <div class="skill-header">
+                <div class="skill-icon"><i class="fab fa-js"></i></div>
+                <h3>Frontend</h3>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>JavaScript</span>
+                    <span>80%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 80%;"></div>
+                </div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>HTML/CSS</span>
+                    <span>90%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 90%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="skill-card fade-in">
+            <div class="skill-header">
+                <div class="skill-icon"><i class="fab fa-docker"></i></div>
+                <h3>DevOps</h3>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>Docker</span>
+                    <span>70%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 70%;"></div>
+                </div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>Git</span>
+                    <span>85%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: 85%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<!-- Hero du projet -->
+<section class="project-detail">
+    <div class="container">
+        <!-- Image principale -->
+        <div class="project-hero">
+            {% if project.image %}
+            <img src="{{ project.image.url }}" alt="{{ project.title }}">
+            {% else %}
+            <div style="width:100%; height:100%; background: var(--gradient-primary); display:flex; align-items:center; justify-content:center;">
+                <i class="fas fa-code" style="font-size: 5rem; color: white; opacity: 0.5;"></i>
+            </div>
+            {% endif %}
+            <div class="project-hero-overlay"></div>
+        </div>
+
+        <!-- Contenu -->
+        <div class="project-detail-content">
+            <!-- En-tête -->
+            <div class="project-detail-header">
+                <h1>{{ project.title }}</h1>
+                
+                <div class="project-detail-meta">
+                    {% if project.github_url %}
+                    <a href="{{ project.github_url }}" target="_blank">
+                        <i class="fab fa-github"></i> Code source
+                    </a>
+                    {% endif %}
+                    {% if project.live_url %}
+                    <a href="{{ project.live_url }}" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Voir le site
+                    </a>
+                    {% endif %}
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">
+                        <i class="far fa-calendar"></i> {{ project.created_at|date:"F Y" }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Technologies -->
+            <div class="project-tech-section">
+                <h3><i class="fas fa-layer-group"></i> Technologies utilisées</h3>
+                <div class="project-tags" style="margin-top: var(--space-sm);">
+                    {% for tech in project.tech_stack.split %}
+                    <span class="tag">{{ tech }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="project-description">
+                <h3><i class="fas fa-align-left"></i> Description</h3>
+                <div class="project-description-text">
+                    {{ project.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Galerie d'images (si tu as un modèle ProjectImage) -->
+            {% if project.images.all %}
+            <div class="project-gallery">
+                <h3><i class="fas fa-images"></i> Galerie</h3>
+                <div class="gallery-grid">
+                    {% for img in project.images.all %}
+                    <div class="gallery-item">
+                        <img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}">
+                        {% if img.caption %}
+                        <p>{{ img.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Navigation -->
+            <div class="project-nav">
+                <a href="/" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Retour aux projets
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

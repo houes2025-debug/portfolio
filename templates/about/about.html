@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}À propos{% endblock %}
+
+{% block content %}
+
+
+<div class="hero">
+    <div class="section-header">
+        <h2>À propos de moi</h2>
+        <div class="section-divider"></div>
+        <p>Découvrez mon parcours, mes expériences et mes compétences</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem;">
+        <!-- Colonne gauche : Parcours & Expériences -->
+        <div>
+            <div style="margin-bottom: 3rem;">
+                <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Parcours</h2>
+                <p style="color: var(--text-secondary);">
+                    Passionné par le développement web, je crée des applications modernes 
+                    avec Django et des technologies front-end contemporaines.
+                </p>
+            </div>
+
+            <div>
+                <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Expériences</h2>
+                <div class="timeline">
+                    {% for exp in experiences %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            {{ exp.start_date|date:"Y" }}{% if exp.end_date %} - {{ exp.end_date|date:"Y" }}{% else %} - Présent{% endif %}
+                        </div>
+                        <div class="timeline-content">
+                            <h3>{{ exp.title }}</h3>
+                            <p class="company">{{ exp.company }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="color: var(--text-muted);">Aucune expérience enregistrée.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite : Compétences -->
+        <div>
+            <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Compétences</h2>
+            {% for skill in skills %}
+            <div class="skill-item">
+                <div class="skill-info">
+                    <span>{{ skill.name }}</span>
+                    <span>{{ skill.proficiency }}%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: {{ skill.proficiency }}%"></div>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--text-muted);">Ajoutez vos compétences depuis l'admin.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

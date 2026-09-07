@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+<div class="hero">
+<div class="section">
+    <div class="section-header">
+        <h2>Blog</h2>
+        <div class="section-divider"></div>
+        <p>Découvrez mes derniers articles et réflexions</p>
+    </div>
+
+    <div class="blog-grid">
+        {% for post in posts %}
+        <article class="blog-card">
+            {% if post.image %}
+            <div class="project-image-wrapper">
+                <img src="{{ post.image.url }}" class="blog-image" alt="{{ post.title }}">
+            </div>
+            {% endif %}
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span><i class="fas fa-user"></i> {{ post.author }}</span>
+                    <span><i class="fas fa-calendar"></i> {{ post.created_at|date:"d F Y" }}</span>
+                </div>
+                <h3>
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </h3>
+                <p class="blog-excerpt">{{ post.excerpt|default:post.content|truncatewords:20 }}</p>
+            </div>
+        </article>
+        {% empty %}
+        <p style="text-align: center; color: var(--text-muted); grid-column: 1 / -1;">Aucun article publié.</p>
+        {% endfor %}
+    </div>
+</div>
+</div>
+{% endblock %}

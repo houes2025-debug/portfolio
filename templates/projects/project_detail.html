@@ -1,0 +1,486 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<style>
+/* ========== VARIABLES CSS (fallbacks inclus) ========== */
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #818cf8;
+    --bg-card: #ffffff;
+    --bg-body: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --gradient-primary: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
+
+/* Dark mode */
+body.dark-mode {
+    --bg-card: #1e293b;
+    --bg-body: #0f172a;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+}
+
+body.dark-mode .tag {
+    background: rgba(99, 102, 241, 0.2) !important;
+    color: #818cf8 !important;
+}
+
+body.dark-mode .tag:hover {
+    background: #818cf8 !important;
+    color: #1e293b !important;
+}
+
+/* ========== RESET & BASE ========== */
+.project-detail {
+    padding: 40px 20px;
+    background: var(--bg-body);
+    min-height: 100vh;
+}
+
+.project-detail .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ========== HERO IMAGE ========== */
+.project-hero {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin-top: 60px;
+    margin-bottom: 40px;
+    background: #1e293b;
+}
+
+.project-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.project-hero:hover img {
+    transform: scale(1.03);
+}
+
+.project-hero .placeholder-hero {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-hero .placeholder-hero i {
+    font-size: 5rem;
+    color: white;
+    opacity: 0.5;
+}
+
+.project-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(30, 41, 59, 0.1) 0%, rgba(30, 41, 59, 0.85) 100%);
+    pointer-events: none;
+}
+
+/* ========== CONTENT CARD ========== */
+.project-detail-content {
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 40px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.project-detail-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.project-detail-content:hover::before {
+    transform: scaleX(1);
+}
+
+.project-detail-content:hover {
+    border-color: rgba(79, 70, 229, 0.2);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+/* ========== HEADER ========== */
+.project-detail-header {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-detail-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.project-detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.project-detail-meta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #4f46e5;
+    color: white !important;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.project-detail-meta a:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: white !important;
+}
+
+.project-detail-meta a i {
+    font-size: 1rem;
+}
+
+.project-detail-meta .date-badge {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ========== SECTIONS ========== */
+.project-tech-section,
+.project-description,
+.project-gallery {
+    margin-bottom: 40px;
+}
+
+.project-tech-section h3,
+.project-description h3,
+.project-gallery h3 {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.project-tech-section h3 i,
+.project-description h3 i,
+.project-gallery h3 i {
+    color: #4f46e5;
+    font-size: 1.1rem;
+}
+
+/* ========== TAGS ========== */
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    padding: 6px 16px;
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: default;
+    border: none;
+    display: inline-block;
+}
+
+.tag:hover {
+    background: #4f46e5;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+/* ========== DESCRIPTION ========== */
+.project-description-text {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.project-description-text p {
+    margin-bottom: 16px;
+}
+
+.project-description-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* ========== GALLERY ========== */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.gallery-item {
+    background: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.gallery-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    z-index: 2;
+}
+
+.gallery-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(79, 70, 229, 0.2);
+}
+
+.gallery-item:hover::before {
+    transform: scaleX(1);
+}
+
+.gallery-item .img-wrapper {
+    overflow: hidden;
+    position: relative;
+    height: 220px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-item p {
+    padding: 12px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 0;
+    background: var(--bg-card);
+}
+
+/* ========== NAVIGATION ========== */
+.project-nav {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px;
+    border: 2px solid #4f46e5;
+    color: #4f46e5 !important;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: transparent;
+    font-size: 0.95rem;
+}
+
+.btn-outline:hover {
+    background: #4f46e5;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+    text-decoration: none;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .project-hero {
+        height: 280px;
+        margin-bottom: 24px;
+    }
+    
+    .project-detail-header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .project-detail-content {
+        padding: 24px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .project-detail-meta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .project-detail-meta a,
+    .project-detail-meta .date-badge {
+        justify-content: center;
+    }
+}
+</style>
+
+<!-- Hero du projet -->
+<section class="project-detail">
+    <div class="container">
+        <!-- Image principale -->
+        <div class="project-hero">
+            {% if project.image %}
+            <img src="{{ project.image.url }}" alt="{{ project.title }}">
+            {% else %}
+            <div class="placeholder-hero">
+                <i class="fas fa-code"></i>
+            </div>
+            {% endif %}
+            <div class="project-hero-overlay"></div>
+        </div>
+
+        <!-- Contenu -->
+        <div class="project-detail-content">
+            <!-- En-tête -->
+            <div class="project-detail-header">
+                <h1>{{ project.title }}</h1>
+                
+                <div class="project-detail-meta">
+                    {% if project.github_url %}
+                    <a href="{{ project.github_url }}" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i> Code source
+                    </a>
+                    {% endif %}
+                    {% if project.live_url %}
+                    <a href="{{ project.live_url }}" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt"></i> Voir le site
+                    </a>
+                    {% endif %}
+                    <span class="date-badge">
+                        <i class="far fa-calendar"></i> {{ project.created_at|date:"F Y" }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Technologies -->
+            <div class="project-tech-section">
+                <h3><i class="fas fa-layer-group"></i> Technologies utilisées</h3>
+                <div class="project-tags">
+                    {% for tech in project.tech_stack.split %}
+                    <span class="tag">{{ tech }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="project-description">
+                <h3><i class="fas fa-align-left"></i> Description</h3>
+                <div class="project-description-text">
+                    {{ project.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Galerie d'images -->
+            {% if project.images.all %}
+            <div class="project-gallery">
+                <h3><i class="fas fa-images"></i> Galerie</h3>
+                <div class="gallery-grid">
+                    {% for img in project.images.all %}
+                    <div class="gallery-item">
+                        <div class="img-wrapper">
+                            <img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}">
+                        </div>
+                        {% if img.caption %}
+                        <p>{{ img.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Navigation -->
+            <div class="project-nav">
+                <a href="/" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Retour aux projets
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
